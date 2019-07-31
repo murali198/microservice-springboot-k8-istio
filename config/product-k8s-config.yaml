@@ -1,0 +1,116 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: product-deployment-v1
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: product
+      version: "v1"
+  template:
+    metadata:
+      labels:
+        app: product
+        version: "v1"
+    spec:
+      containers:
+        - name: product-pod-v1
+          image: product:1.0.0
+          imagePullPolicy: Never
+          ports:
+            - name: product-port
+              containerPort: 9001
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_DB
+            - name: POSTGRES_SERVICE
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_SERVICE
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: product-deployment-v2
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: product
+      version: "v2"
+  template:
+    metadata:
+      labels:
+        app: product
+        version: "v2"
+    spec:
+      containers:
+        - name: product-pod-v2
+          image: product:2.0.0
+          imagePullPolicy: Never
+          ports:
+            - name: product-port
+              containerPort: 9001
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_DB
+            - name: POSTGRES_SERVICE
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_SERVICE
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-service
+spec:
+#  type: NodePort
+  ports:
+    - port: 9001
+      name: http
+#      targetPort: "product-port"
+  selector:
+    app: product
+

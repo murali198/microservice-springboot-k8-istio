@@ -1,0 +1,30 @@
+spring:
+   application:
+      name: Order
+   datasource:
+      driver-class-name: org.postgresql.Driver
+      url: jdbc:postgresql://${POSTGRES_SERVICE}:5432/${POSTGRES_DB}?useSSL=false
+      username: ${POSTGRES_USER}
+      password: ${POSTGRES_PASSWORD}
+   jpa:
+      hibernate:
+         dialect: org.hibernate.dialect.PostgreSQLDialect
+         ddl-auto: create
+      properties:
+         hibernate:
+            jdbc:
+               lob:
+                  non_contextual_creation: true
+   zipkin:
+      base-url: http://${zipkin-service_SERVICE_HOST}:${zipkin-service_SERVICE_PORT}/
+      
+server:
+   port: 8081
+   
+logging:
+   level:
+      root: WARN
+      com:
+         murali:
+            order: DEBUG  
+            
